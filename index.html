@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d1117">
+<title>Vatu Convert</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Vatu">
+<style>
+  :root {
+    --bg: #0d1117; --panel: #161b22; --line: #2a313c; --text: #e6edf3;
+    --dim: #8b949e; --accent: #3fb950; --warn: #d29922; --bad: #f85149;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  body { padding: max(16px, env(safe-area-inset-top)) 16px 24px; max-width: 520px; margin: 0 auto; }
+  header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  h1 { font-size: 18px; margin: 0; letter-spacing: .5px; }
+  #sync { background: none; border: 1px solid var(--line); color: var(--dim); border-radius: 999px;
+    padding: 6px 12px; font-size: 13px; display: flex; gap: 6px; align-items: center; cursor: pointer; }
+  #sync .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--dim); }
+  #sync.ok .dot { background: var(--accent); }
+  #sync.stale .dot { background: var(--warn); }
+  #sync.off .dot { background: var(--bad); }
+  #sync.busy .dot { animation: pulse 1s infinite; }
+  @keyframes pulse { 50% { opacity: .2; } }
+
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 14px; }
+  .row { display: flex; gap: 10px; align-items: center; }
+  label { font-size: 12px; color: var(--dim); text-transform: uppercase; letter-spacing: 1px; }
+  select { flex: 0 0 auto; background: var(--bg); color: var(--text); border: 1px solid var(--line);
+    border-radius: 10px; padding: 10px 8px; font-size: 18px; font-weight: 600; max-width: 130px; }
+  #amount { flex: 1; min-width: 0; background: none; border: none; color: var(--text);
+    font-size: 40px; font-weight: 600; text-align: right; outline: none; padding: 4px 0; }
+  .name { font-size: 13px; color: var(--dim); margin-top: 6px; }
+  .mid { display: flex; justify-content: center; margin: -8px 0; position: relative; z-index: 1; }
+  #swap { width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--line);
+    background: var(--bg); color: var(--text); font-size: 22px; cursor: pointer; }
+  #result { flex: 1; min-width: 0; font-size: 40px; font-weight: 700; text-align: right;
+    color: var(--accent); overflow-wrap: anywhere; }
+  #rate { text-align: center; color: var(--dim); font-size: 14px; margin: 12px 0; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chips button { background: var(--panel); border: 1px solid var(--line); color: var(--text);
+    border-radius: 999px; padding: 8px 14px; font-size: 15px; font-weight: 600; cursor: pointer; }
+  .chips button.on { border-color: var(--accent); color: var(--accent); }
+  #quick { margin-top: 16px; }
+  #quick .row { justify-content: space-between; padding: 8px 2px; border-bottom: 1px solid var(--line); font-size: 15px; }
+  #quick .row:last-child { border-bottom: none; }
+  #quick .row span:first-child { color: var(--dim); }
+  #msg { color: var(--warn); font-size: 13px; text-align: center; margin-top: 10px; min-height: 1em; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Vatu Convert</h1>
+  <button id="sync" title="Tap to refresh"><span class="dot"></span><span id="syncText">…</span></button>
+</header>
+
+<div class="card">
+  <label>From</label>
+  <div class="row">
+    <select id="from"></select>
+    <input id="amount" inputmode="decimal" autocomplete="off" enterkeyhint="done" value="1">
+  </div>
+  <div class="name" id="fromName"></div>
+</div>
+
+<div class="mid"><button id="swap" aria-label="Swap currencies">⇅</button></div>
+
+<div class="card">
+  <label>To</label>
+  <div class="row">
+    <select id="to"></select>
+    <div id="result">–</div>
+  </div>
+  <div class="name" id="toName"></div>
+</div>
+
+<div id="rate"></div>
+<div class="chips" id="chips"></div>
+<div class="card" id="quick"></div>
+<div id="msg"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
