@@ -195,4 +195,62 @@ fillSelects();
 render();
 loadSeed().then(() => sync(false));
 
+// --- "Put this app on my phone" help ---
+const ua = navigator.userAgent;
+const isIOS = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+const isAndroid = /Android/.test(ua);
+const isFirefox = /Firefox|FxiOS/.test(ua);
+const isInstalled = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+let installEvent = null;
+
+function installSteps() {
+  if (isIOS && isFirefox) return { sub: 'Firefox on iPhone', steps: [
+    'Tap the <b>☰ menu</b> (three lines, bottom right).',
+    'Tap <b>Share</b>.',
+    'Tap <b>Add to Home Screen</b>, then <b>Add</b>.',
+    'Open <b>Vatu</b> from your home screen once while you have internet.',
+  ] };
+  if (isIOS) return { sub: 'iPhone', steps: [
+    'Tap the <b>Share</b> button (square with an arrow ↑) at the bottom.',
+    'Scroll down and tap <b>Add to Home Screen</b>, then <b>Add</b>.',
+    'Open <b>Vatu</b> from your home screen once while you have internet.',
+  ] };
+  if (isAndroid && isFirefox) return { sub: 'Firefox on Android', steps: [
+    'Tap the <b>⋮ menu</b> (three dots, bottom or top right).',
+    'Tap <b>Add app to Home screen</b> (may say <b>Install</b> or <b>Add to Home screen</b>).',
+    'Tap <b>Add</b>. Vatu is now on your home screen.',
+  ] };
+  if (isAndroid) return { sub: 'Android', steps: [
+    installEvent ? 'Tap the green <b>Install now</b> button below.' : 'Tap the <b>⋮ menu</b> (three dots, top right).',
+    installEvent ? 'Tap <b>Install</b> to confirm.' : 'Tap <b>Install app</b> or <b>Add to Home screen</b>.',
+    'Vatu is now on your home screen.',
+  ] };
+  return { sub: 'You are on a computer', steps: [
+    'On your phone, open the camera and scan the QR code on the GitHub page, or type <b>' + location.host + location.pathname + '</b>.',
+    'Then tap <b>📲 Put this app on my phone</b> on the phone and follow the steps.',
+  ] };
+}
+
+function openSheet() {
+  const { sub, steps } = installSteps();
+  $('sheetSub').textContent = sub;
+  $('steps').innerHTML = steps.map(s => `<li><span>${s}</span></li>`).join('');
+  $('nativeInstall').style.display = installEvent ? '' : 'none';
+  $('sheet').classList.add('open');
+}
+const closeSheet = () => $('sheet').classList.remove('open');
+
+if (!isInstalled()) $('installBtn').style.display = 'block';
+$('installBtn').addEventListener('click', openSheet);
+$('sheetClose').addEventListener('click', closeSheet);
+$('sheet').addEventListener('click', e => { if (e.target.id === 'sheet') closeSheet(); });
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvent = e; });
+$('nativeInstall').addEventListener('click', async () => {
+  if (!installEvent) return;
+  installEvent.prompt();
+  await installEvent.userChoice.catch(() => {});
+  installEvent = null; closeSheet();
+});
+window.addEventListener('appinstalled', () => { $('installBtn').style.display = 'none'; closeSheet(); });
+
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});

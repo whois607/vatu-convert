@@ -55,6 +55,27 @@
   #quick .row:last-child { border-bottom: none; }
   #quick .row span:first-child { color: var(--dim); }
   #msg { color: var(--warn); font-size: 13px; text-align: center; margin-top: 10px; min-height: 1em; }
+
+  #installBtn { display: none; width: 100%; margin-top: 18px; padding: 14px; border-radius: 14px;
+    border: 1px solid var(--accent); background: none; color: var(--accent); font-size: 17px; font-weight: 600; cursor: pointer; }
+  #sheet { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 10;
+    align-items: flex-end; justify-content: center; }
+  #sheet.open { display: flex; }
+  #sheet .box { background: var(--panel); border: 1px solid var(--line); border-radius: 18px 18px 0 0;
+    width: 100%; max-width: 520px; padding: 20px 20px max(20px, env(safe-area-inset-bottom)); }
+  #sheet h2 { margin: 0 0 4px; font-size: 20px; }
+  #sheet .sub { color: var(--dim); font-size: 14px; margin-bottom: 14px; }
+  #sheet ol { margin: 0; padding: 0; list-style: none; counter-reset: s; }
+  #sheet li { counter-increment: s; display: flex; gap: 12px; align-items: flex-start; padding: 10px 0;
+    font-size: 17px; border-bottom: 1px solid var(--line); }
+  #sheet li:last-child { border-bottom: none; }
+  #sheet li::before { content: counter(s); flex: 0 0 30px; height: 30px; border-radius: 50%;
+    background: var(--accent); color: #000; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  #sheet b { color: var(--accent); }
+  #sheet .actions { display: flex; gap: 10px; margin-top: 16px; }
+  #sheet .actions button { flex: 1; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 600;
+    border: 1px solid var(--line); background: var(--bg); color: var(--text); cursor: pointer; }
+  #sheet .actions .go { background: var(--accent); color: #000; border-color: var(--accent); }
 </style>
 </head>
 <body>
@@ -87,6 +108,19 @@
 <div class="chips" id="chips"></div>
 <div class="card" id="quick"></div>
 <div id="msg"></div>
+
+<button id="installBtn">📲 Put this app on my phone</button>
+<div id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+  <div class="box">
+    <h2 id="sheetTitle">Put Vatu on your phone</h2>
+    <div class="sub" id="sheetSub"></div>
+    <ol id="steps"></ol>
+    <div class="actions">
+      <button id="nativeInstall" class="go" style="display:none">Install now</button>
+      <button id="sheetClose">Close</button>
+    </div>
+  </div>
+</div>
 
 <script src="app.js"></script>
 </body>

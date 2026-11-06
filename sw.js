@@ -1,5 +1,5 @@
 // Caches the app itself so it opens with no internet. Rates are cached by app.js.
-const CACHE = 'vatu-convert-v2';
+const CACHE = 'vatu-convert-v3';
 const SHELL = ['./', 'index.html', 'app.js', 'manifest.webmanifest', 'rates-seed.json',
   'icon-180.png', 'icon-192.png', 'icon-512.png'];
 
